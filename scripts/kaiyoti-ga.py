@@ -19,6 +19,7 @@ from __future__ import print_function
 
 import argparse
 import os.path
+import os
 import json
 
 import google.oauth2.credentials
@@ -51,8 +52,8 @@ def process_event(event):
     print(event)
 
     if event.type == EventType.ON_CONVERSATION_TURN_STARTED:
-        print("Event started")
         greenledon()
+        os.system("/usr/bin/aplay /home/kaiyoti/media/kaiyoti-response.wav")
 
     if event.type == EventType.ON_RECOGNIZING_SPEECH_FINISHED:
         redledon()
@@ -65,7 +66,6 @@ def process_event(event):
         greenledoff()
 
 def main():
-    greenledoff()
     parser = argparse.ArgumentParser(
         formatter_class=argparse.RawTextHelpFormatter)
     parser.add_argument('--credentials', type=existing_file,
@@ -77,6 +77,10 @@ def main():
                         ),
                         help='Path to store and read OAuth2 credentials')
     args = parser.parse_args()
+
+    greenledoff()
+    redledoff()
+
     with open(args.credentials, 'r') as f:
         credentials = google.oauth2.credentials.Credentials(token=None,
                                                             **json.load(f))
@@ -88,4 +92,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
